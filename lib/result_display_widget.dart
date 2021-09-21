@@ -3,9 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loan_calculator_app_ui/utils.dart';
 
 class ResultDisplay extends StatelessWidget {
-  const ResultDisplay({
-    Key? key,
-  }) : super(key: key);
+  final double monthlyPayment;
+  final double totalLoan;
+  final double interest;
+  const ResultDisplay(
+      {Key? key,
+      required this.monthlyPayment,
+      required this.totalLoan,
+      required this.interest})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,7 @@ class ResultDisplay extends StatelessWidget {
               height: 16,
             ),
             Text(
-              "\$525.92",
+              "\$${monthlyPayment.toStringAsFixed(2)}",
               style: GoogleFonts.lato(
                   color: Colors.white,
                   fontWeight: FontWeight.w400,
@@ -52,7 +58,7 @@ class ResultDisplay extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "4.9%",
+                  "$interest%",
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
@@ -74,7 +80,7 @@ class ResultDisplay extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "\$12622.07",
+                  "\$${totalLoan.toStringAsFixed(2)}",
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey,

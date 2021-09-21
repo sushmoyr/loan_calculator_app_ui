@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loan_calculator_app_ui/logics.dart';
 import 'package:loan_calculator_app_ui/result_display_widget.dart';
 import 'package:loan_calculator_app_ui/utils.dart';
 
@@ -19,8 +20,45 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late final Logic _logic;
+  late double _interest;
+  late double _totalLoan;
+  late double _monthlyRate;
+  //double monthSlider = 24;
+  //double loanSlider = _logic.loanAmount;
+  double creditSlider = 740;
+
+  @override
+  void initState() {
+    _logic = new Logic();
+    _interest = _logic.interest;
+    _totalLoan = _logic.totalLoan();
+    _monthlyRate = _logic.monthlyRate();
+
+    _logic.addListener(() {
+      setState(() {
+        _interest = _logic.interest;
+        _totalLoan = _logic.totalLoan();
+        _monthlyRate = _logic.monthlyRate();
+      });
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _logic.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +90,11 @@ class HomePage extends StatelessWidget {
                           fontSize: 22,
                           fontWeight: FontWeight.w700),
                     ),
-                    ResultDisplay(),
+                    ResultDisplay(
+                      interest: _interest,
+                      totalLoan: _totalLoan,
+                      monthlyPayment: _monthlyRate,
+                    ),
                   ],
                 ),
               )),
@@ -72,7 +114,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     trailing: Text(
-                      "\$12,000",
+                      "\$${_logic.loanAmount.toStringAsFixed(0)}",
                       style: GoogleFonts.lato(
                         color: Colors.white,
                         fontSize: 26,
@@ -80,8 +122,13 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   Slider(
-                    onChanged: (value) {},
-                    value: 12000,
+                    onChanged: (value) {
+                      //loanSlider = value;
+                      setState(() {
+                        _logic.loanAmount = value;
+                      });
+                    },
+                    value: _logic.loanAmount,
                     min: 3000,
                     max: 20000,
                     divisions: 1000,
@@ -113,7 +160,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     trailing: Text(
-                      "24",
+                      "${_logic.loanTerms.toStringAsFixed(0)}",
                       style: GoogleFonts.lato(
                         color: Colors.white,
                         fontSize: 26,
@@ -121,8 +168,13 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   Slider(
-                    onChanged: (value) {},
-                    value: 24,
+                    onChanged: (value) {
+                      setState(() {
+                        //monthSlider = value;
+                        _logic.loanTerms = value;
+                      });
+                    },
+                    value: _logic.loanTerms,
                     min: 0,
                     max: 60,
                     divisions: 5,
@@ -178,7 +230,7 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                     trailing: Text(
-                      "760",
+                      "${creditSlider.toStringAsFixed(0)}",
                       style: GoogleFonts.lato(
                         color: Colors.white,
                         fontSize: 26,
@@ -186,11 +238,14 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   Slider(
-                    onChanged: (value) {},
-                    value: 760,
-                    min: 400,
+                    onChanged: (value) {
+                      setState(() {
+                        creditSlider = value;
+                      });
+                    },
+                    value: creditSlider,
+                    min: 520,
                     max: 801,
-                    divisions: 5,
                     activeColor: gradientLight,
                   ),
                   Padding(
